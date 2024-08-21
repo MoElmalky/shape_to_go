@@ -1,6 +1,7 @@
 name: shape_to_go
 description: "A new Flutter package project."
 version: 0.0.1
+repository: https://github.com/MoElmalky/shape_to_go
 homepage:
 
 environment:
