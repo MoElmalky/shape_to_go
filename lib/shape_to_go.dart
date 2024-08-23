@@ -4,56 +4,88 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class Potter extends CustomClipper<Path> {
+
+  /// Temp
+  factory Potter.triangle({Radius? radius}) {
+    return Potter(points: const [
+      TopCenterCorner(),
+      BottomRightCorner(),
+      BottomLeftCorner(),
+    ], radius: radius);
+  }
+
+  /// Temp
+  factory Potter.messageShapeRight({Radius? radius}) {
+    return Potter(points: const [
+      PointOnTopSide(divider: 6),
+      TopRightCorner(),
+      BottomRightCorner(),
+      PointOnBottomSide(divider: 6),
+      PointOnShap(xDivider: 6, yDivider: 3 / 2),
+      CenterLeftCorner(),
+      PointOnShap(xDivider: 6, yDivider: 3),
+    ], radius: radius);
+  }
+
   /// List of points that [Potter] will follow.
-  /// 
+  ///
   /// Must provide at least 3 points, It automatically closes the shape,
   /// Don't have to provide the first point again at the end.
-  /// 
-  /// You can use one of these classes to specify where you want 
+  ///
+  /// You can use one of these classes to specify where you want
   /// the point to be:
-  /// 
-  /// * [TopLeftEdge]
-  /// * [TopCenterEdge]
-  /// * [TopRightEdge]
-  /// * [CenterRightEdge]
-  /// * [BottomRightEdge]
-  /// * [BottomCenterEdge]
-  /// * [BottomLeftEdge]
-  /// * [CenterLeftEdge]
+  ///
+  /// * [TopLeftCorner]
+  /// * [TopCenterCorner]
+  /// * [TopRightCorner]
+  /// * [CenterRightCorner]
+  /// * [BottomRightCorner]
+  /// * [BottomCenterCorner]
+  /// * [BottomLeftCorner]
+  /// * [CenterLeftCorner]
   /// * [CenterPoint]
   /// * [PointOnTopSide]
   /// * [PointOnRightSide]
   /// * [PointOnBottomSide]
   /// * [PointOnLeftSide]
   /// * [PointOnShap]
-  /// * [EdgePoint]
-  final List<Edge> points;
+  /// * [CornerPoint]
+  final List<Corner> points;
 
-  /// The radius of a circular border that will apply to all
-  /// edges.
-  ///
-  final double radius;
+  /// If [radius] is provided in a [Corner] (point) this [raduis] wouldn't apply
+  /// to that [Corner] (point).
+  final Radius? radius;
 
-  /// Creates a [CustomClipper<Path>].
-  const Potter({super.reclip, required this.points, this.radius = 20}): assert(points.length>2);
+  /// Creates a [CustomClipper<Path>] with the specified points and radius.
+  const Potter({super.reclip, required this.points, this.radius})
+      : assert(points.length > 2);
 
   @override
   Path getClip(Size size) {
     final Path path = Path();
+
     for (int i = 0; i < points.length; i++) {
-      Point<double> previousPoint = _getPoint(points[(i - 1) % points.length], size);
+
+      double xr = points[i].radius?.x ?? (radius?.x ?? 0);
+      double yr = points[i].radius?.y ?? (radius?.y ?? 0);
+
+      Point<double> previousPoint =
+          _getPoint(points[(i - 1) % points.length], size);
       Point<double> currentPoint = _getPoint(points[i], size);
-      Point<double> nextPoint = _getPoint(points[(i + 1) % points.length], size);
-      Point<double> u1 = (previousPoint - currentPoint) *(1/
-          sqrt(pow((previousPoint.x - currentPoint.x), 2) +
-              pow((previousPoint.y - currentPoint.y), 2)));
-      Point<double> u2 = (nextPoint - currentPoint) * ( 1 /
-          sqrt(pow((nextPoint.x - currentPoint.x), 2) +
-              pow((nextPoint.y - currentPoint.y), 2)));
+      Point<double> nextPoint =
+          _getPoint(points[(i + 1) % points.length], size);
+      Point<double> u1 = (previousPoint - currentPoint) *
+          (1 /
+              sqrt(pow((previousPoint.x - currentPoint.x), 2) +
+                  pow((previousPoint.y - currentPoint.y), 2)));
+      Point<double> u2 = (nextPoint - currentPoint) *
+          (1 /
+              sqrt(pow((nextPoint.x - currentPoint.x), 2) +
+                  pow((nextPoint.y - currentPoint.y), 2)));
       Point<double> p1 =
-          Point<double>(currentPoint.x + radius * u1.x, currentPoint.y + radius * u1.y);
+          Point<double>(currentPoint.x + xr * u1.x, currentPoint.y + yr * u1.y);
       Point<double> p2 =
-          Point<double>(currentPoint.x + radius * u2.x, currentPoint.y + radius * u2.y);
+          Point<double>(currentPoint.x + xr * u2.x, currentPoint.y + yr * u2.y);
 
       i == 0 ? path.moveTo(p1.x, p1.y) : path.lineTo(p1.x, p1.y);
 
@@ -69,167 +101,171 @@ class Potter extends CustomClipper<Path> {
   }
 }
 
-Point<double> _getPoint(Edge edge, Size size) {
+Point<double> _getPoint(Corner corner, Size size) {
   final width = size.width;
   final height = size.height;
-  if (edge is TopLeftEdge) {
+  if (corner is TopLeftCorner) {
     return const Point<double>(0, 0);
   }
-  if (edge is TopCenterEdge) {
+  if (corner is TopCenterCorner) {
     return Point<double>(width / 2, 0);
   }
-  if (edge is TopRightEdge) {
+  if (corner is TopRightCorner) {
     return Point<double>(width, 0);
   }
-  if (edge is CenterRightEdge) {
+  if (corner is CenterRightCorner) {
     return Point<double>(width, height / 2);
   }
-  if (edge is BottomRightEdge) {
+  if (corner is BottomRightCorner) {
     return Point<double>(width, height);
   }
-  if (edge is BottomCenterEdge) {
+  if (corner is BottomCenterCorner) {
     return Point<double>(width / 2, height);
   }
-  if (edge is BottomLeftEdge) {
+  if (corner is BottomLeftCorner) {
     return Point<double>(0, height);
   }
-  if (edge is CenterLeftEdge) {
+  if (corner is CenterLeftCorner) {
     return Point<double>(0, height / 2);
   }
-  if (edge is CenterPoint) {
+  if (corner is CenterPoint) {
     return Point<double>(width / 2, height / 2);
   }
-  if (edge is PointOnTopSide) {
-    return Point<double>(width / edge.divider, 0);
+  if (corner is PointOnTopSide) {
+    return Point<double>(width / corner.divider, 0);
   }
-  if (edge is PointOnRightSide) {
-    return Point<double>(width, height / edge.divider);
+  if (corner is PointOnRightSide) {
+    return Point<double>(width, height / corner.divider);
   }
-  if (edge is PointOnBottomSide) {
-    return Point<double>(width / edge.divider, height);
+  if (corner is PointOnBottomSide) {
+    return Point<double>(width / corner.divider, height);
   }
-  if (edge is PointOnLeftSide) {
-    return Point<double>(0, height / edge.divider);
+  if (corner is PointOnLeftSide) {
+    return Point<double>(0, height / corner.divider);
   }
-  if (edge is PointOnShap) {
-    return Point<double>(width / edge.xDivider, height / edge.yDivider);
+  if (corner is PointOnShap) {
+    return Point<double>(width / corner.xDivider, height / corner.yDivider);
   }
-  if (edge is EdgePoint) {
-    return Point<double>(edge.x, edge.y);
+  if (corner is CornerPoint) {
+    return Point<double>(corner.x, corner.y);
   } else {
     return const Point<double>(0, 0);
   }
 }
 
-abstract class Edge {
-  const Edge();
+class Corner {
+  final Radius? radius;
+
+  const Corner({this.radius});
 }
 
-class EdgePoint extends Point<double> implements Edge {
+class CornerPoint extends Point<double> implements Corner {
+  @override
+  final Radius? radius;
+
   /// Creates a point on (x,y).
-  const EdgePoint(super.x, super.y);
+  const CornerPoint({required double x, required double y, this.radius})
+      : super(x, y);
 }
 
-class TopLeftEdge extends Edge {
+class TopLeftCorner extends Corner {
   /// Creates a point on the Top Left Corner.
-  const TopLeftEdge();
+  const TopLeftCorner({super.radius});
 }
 
-class TopCenterEdge extends Edge {
+class TopCenterCorner extends Corner {
   /// Creates a point on the Top Center Point.
-  const TopCenterEdge();
+  const TopCenterCorner({super.radius});
 }
 
-class TopRightEdge extends Edge {
+class TopRightCorner extends Corner {
   /// Creates a point on the Top Right Corner.
-  const TopRightEdge();
+  const TopRightCorner({super.radius});
 }
 
-class CenterRightEdge extends Edge {
+class CenterRightCorner extends Corner {
   /// Creates a point on the Center Right Point.
-  const CenterRightEdge();
+  const CenterRightCorner({super.radius});
 }
 
-class BottomRightEdge extends Edge {
+class BottomRightCorner extends Corner {
   /// Creates a point on the Bottom Right Corner.
-  const BottomRightEdge();
+  const BottomRightCorner({super.radius});
 }
 
-class BottomCenterEdge extends Edge {
+class BottomCenterCorner extends Corner {
   /// Creates a point on the Bottom Center Point.
-  const BottomCenterEdge();
+  const BottomCenterCorner({super.radius});
 }
 
-class BottomLeftEdge extends Edge {
+class BottomLeftCorner extends Corner {
   /// Creates a point on the Bottom Left Corner.
-  const BottomLeftEdge();
+  const BottomLeftCorner({super.radius});
 }
 
-class CenterLeftEdge extends Edge {
+class CenterLeftCorner extends Corner {
   /// Creates a point on the Center Left Point.
-  const CenterLeftEdge();
+  const CenterLeftCorner({super.radius});
 }
 
-class CenterPoint extends Edge {
+class CenterPoint extends Corner {
   /// Creates a point on the Center Point.
-  const CenterPoint();
+  const CenterPoint({super.radius});
 }
 
-class PointOnTopSide extends Edge {
+class PointOnTopSide extends Corner {
   final double divider;
 
   /// Creates a point on the Top side,
   /// where:
-  /// 
+  ///
   /// * x = width / [divider]
   /// * y = 0
-  const PointOnTopSide({required this.divider});
+  const PointOnTopSide({required this.divider, super.radius});
 }
 
-class PointOnRightSide extends Edge {
+class PointOnRightSide extends Corner {
   final double divider;
 
   /// Creates a point on the Right side,
   /// where:
-  /// 
+  ///
   /// * x = width
   /// * y = height / [divider]
-  const PointOnRightSide({required this.divider});
+  const PointOnRightSide({required this.divider, super.radius});
 }
 
-class PointOnBottomSide extends Edge {
+class PointOnBottomSide extends Corner {
   final double divider;
 
   /// Creates a point on the Bottom side,
   /// where:
-  /// 
+  ///
   /// * x = width / [divider]
   /// * y = height
-  const PointOnBottomSide({required this.divider});
+  const PointOnBottomSide({required this.divider, super.radius});
 }
 
-class PointOnLeftSide extends Edge {
+class PointOnLeftSide extends Corner {
   final double divider;
 
   /// Creates a point on the Left side,
   /// where:
-  /// 
+  ///
   /// * x = 0
   /// * y = height / [divider]
-  const PointOnLeftSide({required this.divider});
+  const PointOnLeftSide({required this.divider, super.radius});
 }
 
-class PointOnShap extends Edge {
+class PointOnShap extends Corner {
   final double xDivider;
   final double yDivider;
 
   /// Creates a point,
   /// where:
-  /// 
+  ///
   /// * x = width / [xDivider]
   /// * y = height / [yDivider]
-  const PointOnShap({
-    required this.xDivider,
-    required this.yDivider,
-  });
+  const PointOnShap(
+      {required this.xDivider, required this.yDivider, super.radius});
 }

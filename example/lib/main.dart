@@ -37,12 +37,14 @@ class Example extends StatelessWidget {
                     left: (MediaQuery.of(context).size.width-342)/2,
                     child: ClipPath(
                       clipper: Potter(points: [
-                        const TopLeftEdge(),
-                        const TopRightEdge(),
+                        const TopLeftCorner(),
+                        const TopRightCorner(),
                         const PointOnRightSide(divider: 1.5),
-                        const BottomCenterEdge(),
+                        const BottomCenterCorner(),
                         const PointOnLeftSide(divider: 1.5),
-                      ]),
+                      ],
+                      radius: const Radius.circular(10)
+                      ),
                       child: Container(
                         color: Colors.purple,
                         width: 342,
@@ -55,11 +57,13 @@ class Example extends StatelessWidget {
                     bottom: 0,
                     child: ClipPath(
                       clipper: Potter(points: [
-                        const TopLeftEdge(),
-                        const PointOnRightSide(divider: 3),
-                        const BottomRightEdge(),
-                        const BottomLeftEdge(),
-                      ]),
+                        const TopLeftCorner(radius: Radius.circular(30)),
+                        const PointOnRightSide(divider: 2.5),
+                        const BottomRightCorner(),
+                        const BottomLeftCorner(),
+                      ],
+                      radius: const Radius.circular(10)
+                      ),
                       child: Container(
                         color: Colors.cyan,
                         width: 163,
@@ -72,11 +76,13 @@ class Example extends StatelessWidget {
                     bottom: 0,
                     child: ClipPath(
                       clipper: Potter(points: [
-                        const PointOnLeftSide(divider: 3),
-                        const TopRightEdge(),
-                        const BottomRightEdge(),
-                        const BottomLeftEdge(),
-                      ]),
+                        const PointOnLeftSide(divider: 2.5),
+                        const TopRightCorner(radius: Radius.circular(30)),
+                        const BottomRightCorner(),
+                        const BottomLeftCorner(),
+                      ],
+                      radius: const Radius.circular(10)
+                      ),
                       child: Container(
                         color: Colors.deepPurple,
                         width: 163,
@@ -90,13 +96,13 @@ class Example extends StatelessWidget {
             const SizedBox(height: 20,),
             ClipPath( 
               clipper: Potter(points: [
-                const TopCenterEdge(),
+                const TopCenterCorner(),
                 const PointOnShap(xDivider: (8/5), yDivider: (8/3)),
-                const CenterRightEdge(),
+                const CenterRightCorner(),
                 const PointOnShap(xDivider: (8/5), yDivider: (8/5)),
-                const BottomCenterEdge(),
+                const BottomCenterCorner(),
                 const PointOnShap(xDivider: (8/3), yDivider: (8/5)),
-                const CenterLeftEdge(),
+                const CenterLeftCorner(),
                 const PointOnShap(xDivider: (8/3), yDivider: (8/3)),
               ]
               ),
@@ -109,11 +115,11 @@ class Example extends StatelessWidget {
             const SizedBox(height: 20,),
             ClipPath( 
               clipper: Potter(points: [
-                const TopLeftEdge(),
+                const TopLeftCorner(),
                 const CenterPoint(),
-                const TopRightEdge(),
-                const BottomRightEdge(),
-                const BottomLeftEdge(),
+                const TopRightCorner(),
+                const BottomRightCorner(),
+                const BottomLeftCorner(),
               ]
               ),
               child: Container(
@@ -125,13 +131,13 @@ class Example extends StatelessWidget {
             const SizedBox(height: 20,),
             ClipPath( 
               clipper: Potter(points: [
-                const TopLeftEdge(),
+                const TopLeftCorner(),
                 const PointOnShap(xDivider: 2,yDivider: 3),
-                const TopRightEdge(),
+                const TopRightCorner(),
                 const PointOnShap(xDivider: 3/2,yDivider: 2),
-                const BottomRightEdge(),
+                const BottomRightCorner(),
                 const PointOnShap(xDivider: 2,yDivider: 3/2),
-                const BottomLeftEdge(),
+                const BottomLeftCorner(),
                 const PointOnShap(xDivider: 3,yDivider: 2),
               ]
               ),
@@ -139,6 +145,15 @@ class Example extends StatelessWidget {
                 color: Colors.green,
                 width: 342,
                 height: 357,
+              ),
+            ),
+            const SizedBox(height: 20,),
+            ClipPath( 
+              clipper: Potter.messageShapeRight(radius: const Radius.circular(20)),
+              child: Container(
+                color: Colors.green,
+                width: 342,
+                height: 100,
               ),
             ),
           ],

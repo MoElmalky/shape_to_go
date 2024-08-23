@@ -1,3 +1,5 @@
+[![pub package](https://img.shields.io/pub/v/shape_to_go.svg)](https://pub.dartlang.org/packages/shape_to_go)
+
 # shape_to_go
 
 Creating basic shapes is now easy with the shape_to_go package.
